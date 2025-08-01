@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Virtual Nail Polish Try-On</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url("images/Website Background.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 60px;
+      padding: 20px;
+      width: 100%;
+      max-width: 1400px;
+    }
+    .left-section, .right-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .left-section h2 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 10px;
+      background-color: #d4b89c;
+      color: #4e2e19;
+      padding: 12px 24px;
+      border-radius: 40px;
+    }
+    .model-select {
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      background-color:#5a331a;
+      color: white;
+      border: none;
+      border-radius: 10px;
+    }
+    canvas {
+      width: 350px;
+      height: 350px;
+      border: 2px solid #4e2e19;
+      background-color: transparent;
+    }
+    .right-section h1 {
+      margin-bottom: 30px;
+      font-size: 30px;
+      background-color: #d4b89c;
+      color: #4e2e19;
+      padding: 14px 28px;
+      border-radius: 20px;
+    }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+    }
+    .controls h3 {
+      font-size: 20px;
+      text-align: center;
+      background-color: #d03a83;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 12px;
+    }
+    .shape-buttons {
+      display: flex;
+      gap: 30px;
+    }
+    .shape-button {
+      background-color: #5a331a;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 25px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 40px);
+      gap: 12px;
+      justify-content: center;
+    }
+    .color-swatch {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid black;
+    }
+    .back-button {
+      background-color: #5a331a;
+      color: white;
+      font-weight: bold;
+      font-size: 20px;
+      padding: 16px 40px;
+      border: none;
+      border-radius: 30px;
+      text-decoration: none;
+      margin-top: 30px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left-section">
+      <h2>Choose a Hand<br>Model</h2>
+      <select id="handModel" class="model-select">
+        <option value="images/Type1.png">Latte</option>
+        <option value="images/Type2.png">Macchiato</option>
+        <option value="images/Type3.png">Cappuccino</option>
+        <option value="images/Type4.png">Mocha</option>
+        <option value="images/Type5.png">Espresso</option>
+      </select>
+      <canvas id="nailCanvas" width="400" height="400"></canvas>
+    </div>
+    <div class="right-section">
+      <h1>Virtual Nail Polish Try-On</h1>
+      <div class="controls">
+        <div>
+          <h3>Choose Nail Shape</h3>
+          <div class="shape-buttons">
+            <button class="shape-button" data-shape="Oval">Oval</button>
+            <button class="shape-button" data-shape="Coffin">Coffin</button>
+          </div>
+        </div>
+        <div>
+          <h3>Select a Color</h3>
+          <div class="color-grid">
+  <div class="color-swatch" title="My Pink Slip is Showing" style="background-color: #f7ced7;"></div>
+  <div class="color-swatch" title="Calling out Slick" style="background-color: #a7a8aa;"></div>
+  <div class="color-swatch" title="Boss Vibes" style="background-color: #971b2f;"></div>
+  <div class="color-swatch" title="I Got Time Today" style="background-color: #1d428a;"></div>
+  <div class="color-swatch" title="Greenlight to Paradise" style="background-color: #35a11d;"></div>
+  <div class="color-swatch" title="Lemme Hold Something" style="background-color: #fffb19;"></div>
+  <div class="color-swatch" title="I Like Nice Things" style="background-color: #fffaed;"></div>
+  <div class="color-swatch" title="Praise Break" style="background-color: #713096;"></div>
+  <div class="color-swatch" title="Not a Kare-n the World" style="background-color: #fffffc;"></div>
+  <div class="color-swatch" title="Love n Laughter" style="background-color: #86cfba;"></div>
+  <div class="color-swatch" title="Pray for Me" style="background-color: #c5a1e3;"></div>
+  <div class="color-swatch" title="It’s Giving" style="background-color: #de4a1d;"></div>
+</div>
+        </div>
+      </div>
+      <a href="https://www.polishmeunbothered.com/#/" class="back-button">Back to PMU</a>
+    </div>
+  </div>
+  <script>
+    const canvas = document.getElementById('nailCanvas');
+    const ctx = canvas.getContext('2d');
+    const colorSwatches = document.querySelectorAll('.color-swatch');
+    const handModelSelect = document.getElementById('handModel');
+    const shapeButtons = document.querySelectorAll('.shape-button');
+
+    let currentHand = 'images/Type1.png';
+    let currentMask = 'images/CoffinMask1.png';
+    let currentColor = '#f7ced7';
+    let currentShape = 'Coffin';
+
+    function updateCanvas() {
+  const handImg = new Image();
+  const maskImg = new Image();
+  const glitterImg = new Image();
+
+  handImg.src = currentHand;
+  maskImg.src = currentMask;
+  glitterImg.src = 'images/GoldGlitter.png'; 
+
+  Promise.all([
+    new Promise(resolve => handImg.onload = resolve),
+    new Promise(resolve => maskImg.onload = resolve),
+    new Promise(resolve => glitterImg.onload = resolve)
+  ]).then(() => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+    ctx.drawImage(handImg, 0, 0, canvas.width, canvas.height);
+
+    
+    ctx.globalCompositeOperation = 'source-in';
+    ctx.drawImage(maskImg, 0, 0, canvas.width, canvas.height);
+    ctx.globalCompositeOperation = 'source-atop';
+    ctx.fillStyle = currentColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    
+    const glitterColors = ['rgb(113, 48, 150)', 'rgb(255, 255, 252)', 'rgb(134, 207, 186)'];
+    if (glitterColors.includes(currentColor)) {
+      ctx.globalAlpha = 0.6;
+      ctx.drawImage(glitterImg, 0, 0, canvas.width, canvas.height);
+      ctx.globalAlpha = 1.0;
+    }
+
+    
+    ctx.globalCompositeOperation = 'destination-over';
+    ctx.drawImage(handImg, 0, 0, canvas.width, canvas.height);
+    ctx.globalCompositeOperation = 'source-over';
+  });
+}
+
+
+    handModelSelect.addEventListener('change', (e) => {
+      const modelNumber = e.target.selectedIndex + 1;
+      currentHand = `images/Type${modelNumber}.png`;
+      currentMask = `images/${currentShape}Mask${modelNumber}.png`;
+      updateCanvas();
+    });
+
+    shapeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        currentShape = button.dataset.shape;
+        const modelNumber = handModelSelect.selectedIndex + 1;
+        currentMask = `images/${currentShape}Mask${modelNumber}.png`;
+        updateCanvas();
+      });
+    });
+
+    colorSwatches.forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        currentColor = swatch.style.backgroundColor;
+        updateCanvas();
+      });
+    });
+
+    updateCanvas();
+  </script>
+</body>
+</html>
